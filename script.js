@@ -1,0 +1,144 @@
+/* =========================================================
+   BULLBORN — script.js
+   Ce fichier gère : le menu mobile, le panier (stocké dans
+   le navigateur avec localStorage, donc il reste rempli
+   quand on change de page), et le formulaire de contact.
+   Tu n'as normalement rien à modifier ici.
+   ========================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* ---------- Menu mobile ---------- */
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+  }
+
+  /* ---------- Panier ---------- */
+  const CART_KEY = 'bullborn_cart';
+
+  function getCart() {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    renderCart();
+  }
+
+  function addToCart(name, price) {
+    const cart = getCart();
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ name, price, qty: 1 });
+    }
+    saveCart(cart);
+    showAddedMessage();
+  }
+
+  function removeFromCart(name) {
+    let cart = getCart();
+    cart = cart.filter(item => item.name !== name);
+    saveCart(cart);
+  }
+
+  function renderCart() {
+    const cart = getCart();
+    const countEl = document.getElementById('cartCount');
+    const itemsEl = document.getElementById('cartItems');
+    const totalEl = document.getElementById('cartTotal');
+
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    if (countEl) countEl.textContent = totalQty;
+
+    if (!itemsEl || !totalEl) return; // pas de panneau panier sur cette page
+
+    if (cart.length === 0) {
+      itemsEl.innerHTML = '<p class="cart-empty">Votre panier est vide.</p>';
+      totalEl.textContent = '0 MAD';
+      return;
+    }
+
+    let total = 0;
+    itemsEl.innerHTML = cart.map(item => {
+      total += item.price * item.qty;
+      return `
+        <div class="cart-item">
+          <div>
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-qty">Quantité : ${item.qty} · ${item.price} MAD</div>
+            <button class="cart-item-remove" data-remove="${item.name}">Retirer</button>
+          </div>
+          <div>${item.price * item.qty} MAD</div>
+        </div>`;
+    }).join('');
+
+    totalEl.textContent = total + ' MAD';
+
+    itemsEl.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => removeFromCart(btn.dataset.remove));
+    });
+  }
+
+  function showAddedMessage() {
+    const msg = document.getElementById('addedMsg');
+    if (!msg) return;
+    msg.classList.add('show');
+    clearTimeout(showAddedMessage._t);
+    showAddedMessage._t = setTimeout(() => msg.classList.remove('show'), 1800);
+  }
+
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      const price = parseFloat(btn.dataset.price);
+      addToCart(name, price);
+    });
+  });
+
+  const cartOpenBtn = document.getElementById('cartOpenBtn');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartCloseBtn = document.getElementById('cartCloseBtn');
+
+  function openCart() {
+    cartPanel && cartPanel.classList.add('open');
+    cartOverlay && cartOverlay.classList.add('show');
+  }
+  function closeCart() {
+    cartPanel && cartPanel.classList.remove('open');
+    cartOverlay && cartOverlay.classList.remove('show');
+  }
+
+  if (cartOpenBtn) cartOpenBtn.addEventListener('click', openCart);
+  if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCart);
+  if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+
+  renderCart();
+
+  /* ---------- Formulaire de contact ---------- */
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Ici, le formulaire affiche seulement un message de succès.
+      // Pour envoyer réellement les messages par email, connecte ce
+      // formulaire à un service comme Formspree ou EmailJS :
+      // exemple avec Formspree -> remplace l'action du <form> par
+      // https://formspree.io/f/TON_ID et enlève ce preventDefault().
+      const successEl = document.getElementById('formSuccess');
+      if (successEl) successEl.classList.add('show');
+      contactForm.reset();
+    });
+  }
+
+});

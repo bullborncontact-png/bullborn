@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#101010"/>
+  <rect x="0.5" y="0.5" width="799" height="799" fill="none" stroke="#2a2a2a"/>
+  <text x="400" y="410" font-family="Arial, sans-serif" font-size="22" fill="#5c5c58" text-anchor="middle" letter-spacing="2">
+    IMAGE PRODUIT À AJOUTER
+  </text>
+  <text x="400" y="440" font-family="Arial, sans-serif" font-size="14" fill="#3a3a38" text-anchor="middle" letter-spacing="1">
+    /images/nom-du-fichier.jpg
+  </text>
+</svg>
