@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi de commande — BULLBORN</title>
+<meta name="description" content="Suis ta commande BULLBORN en direct.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="suivi.html" class="active">Suivi</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartOpenBtn">
+        Panier <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <span class="label">Suivi</span>
+  <h1>Ta commande, en direct.</h1>
+  <p>Entre le code reçu après ta commande pour suivre son avancement.</p>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+
+    <div class="track-lookup">
+      <input type="text" id="trackCodeInput" placeholder="Ex : BB-4F7K2Q" autocomplete="off">
+      <button type="button" class="btn" id="trackLookupBtn">Suivre</button>
+    </div>
+
+    <p class="track-error" id="trackError">Aucune commande trouvée avec ce code. Vérifie qu'il est bien copié tel qu'il t'a été donné.</p>
+    <p class="track-error" id="trackNotReady">Le suivi n'est pas encore activé sur le site (configuration en attente). Contacte-nous directement pour connaître l'état de ta commande.</p>
+
+    <div class="track-result" id="trackResult">
+
+      <div class="track-code-badge" id="trackCodeBadge">BB-000000</div>
+
+      <div class="status-timeline" id="statusTimeline">
+        <div class="status-step" data-status="recue">
+          <div class="status-dot"></div>
+          <span>Reçue</span>
+        </div>
+        <div class="status-step" data-status="preparation">
+          <div class="status-dot"></div>
+          <span>Préparation</span>
+        </div>
+        <div class="status-step" data-status="livraison">
+          <div class="status-dot"></div>
+          <span>Livraison</span>
+        </div>
+        <div class="status-step" data-status="livree">
+          <div class="status-dot"></div>
+          <span>Livrée</span>
+        </div>
+      </div>
+
+      <div class="track-summary">
+        <div class="track-summary-line"><span>Client</span><span id="trackClient">-</span></div>
+        <div class="track-summary-line"><span>Adresse</span><span id="trackAdresse">-</span></div>
+        <div class="track-summary-line"><span>Total</span><span id="trackTotal">-</span></div>
+      </div>
+
+      <div id="mapWrap" style="display:none;">
+        <div class="track-map" id="trackMap"></div>
+        <p class="track-map-note">Position du livreur mise à jour en direct.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">BULLBORN</div>
+        <p class="footer-tag">Vêtements de sport pour ceux qui construisent leur force chaque jour.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="index.html">Accueil</a>
+          <a href="shop.html">Shop</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <span>bullborncontact@gmail.com</span>
+          <span>+212 766808334</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BULLBORN. Tous droits réservés.</span>
+      <span>Conçu pour la discipline.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Panneau panier -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-head">
+    <h3>Votre panier</h3>
+    <button class="cart-close" id="cartCloseBtn" aria-label="Fermer le panier">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty">Votre panier est vide.</p>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">0 MAD</span></div>
+    <button class="btn btn-block" id="checkoutBtn">Passer la commande</button>
+  </div>
+</aside>
+
+<div class="added-msg" id="addedMsg">Ajouté au panier</div>
+
+<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* =========================================================
+   Page Suivi — lit orders/{code} dans Firebase en direct et
+   affiche la timeline + la position du livreur sur une carte
+   (Leaflet + tuiles OpenStreetMap, gratuit, sans clé API).
+   ========================================================= */
+(function(){
+  const input = document.getElementById('trackCodeInput');
+  const lookupBtn = document.getElementById('trackLookupBtn');
+  const errorEl = document.getElementById('trackError');
+  const notReadyEl = document.getElementById('trackNotReady');
+  const resultEl = document.getElementById('trackResult');
+  const badgeEl = document.getElementById('trackCodeBadge');
+  const clientEl = document.getElementById('trackClient');
+  const adresseEl = document.getElementById('trackAdresse');
+  const totalEl = document.getElementById('trackTotal');
+  const mapWrap = document.getElementById('mapWrap');
+  const steps = document.querySelectorAll('.status-step');
+  const STEP_ORDER = ['recue', 'preparation', 'livraison', 'livree'];
+
+  let currentRef = null;
+  let map = null;
+  let marker = null;
+
+  function isFirebaseReady() {
+    return typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0;
+  }
+
+  function resetView() {
+    errorEl.classList.remove('show');
+    resultEl.classList.remove('show');
+  }
+
+  function renderOrder(order) {
+    resultEl.classList.add('show');
+    badgeEl.textContent = order.code || '';
+    clientEl.textContent = (order.prenom || '') + ' ' + (order.nom || '');
+    adresseEl.textContent = order.adresse || '-';
+    totalEl.textContent = (order.total || 0) + ' MAD';
+
+    const currentIndex = STEP_ORDER.indexOf(order.status);
+    steps.forEach(step => {
+      const idx = STEP_ORDER.indexOf(step.dataset.status);
+      step.classList.toggle('done', idx < currentIndex);
+      step.classList.toggle('current', idx === currentIndex);
+    });
+
+    if (order.status === 'livraison' && order.location && order.location.lat) {
+      mapWrap.style.display = 'block';
+      if (!map) {
+        map = L.map('trackMap').setView([order.location.lat, order.location.lng], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+        marker = L.marker([order.location.lat, order.location.lng]).addTo(map);
+      } else {
+        map.setView([order.location.lat, order.location.lng]);
+        marker.setLatLng([order.location.lat, order.location.lng]);
+      }
+      setTimeout(() => map.invalidateSize(), 200);
+    } else {
+      mapWrap.style.display = 'none';
+    }
+  }
+
+  function lookupOrder() {
+    const code = input.value.trim().toUpperCase();
+    if (!code) return;
+
+    if (!isFirebaseReady()) {
+      notReadyEl.classList.add('show');
+      resultEl.classList.remove('show');
+      errorEl.classList.remove('show');
+      return;
+    }
+    notReadyEl.classList.remove('show');
+    resetView();
+
+    if (currentRef) currentRef.off();
+    currentRef = firebase.database().ref('orders/' + code);
+    currentRef.on('value', (snap) => {
+      const order = snap.val();
+      if (!order) {
+        errorEl.classList.add('show');
+        resultEl.classList.remove('show');
+        return;
+      }
+      errorEl.classList.remove('show');
+      renderOrder(order);
+    }, () => {
+      errorEl.classList.add('show');
+      resultEl.classList.remove('show');
+    });
+  }
+
+  lookupBtn.addEventListener('click', lookupOrder);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') lookupOrder(); });
+
+  // Pré-remplit le code depuis l'URL (?code=BB-XXXXXX), pratique
+  // si on veut un jour envoyer un lien direct par email/WhatsApp.
+  const urlCode = new URLSearchParams(window.location.search).get('code');
+  if (urlCode) {
+    input.value = urlCode;
+    lookupOrder();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — BULLBORN</title>
+<meta name="description" content="Contactez l'équipe BULLBORN.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="suivi.html">Suivi</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartOpenBtn">
+        Panier <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <span class="label">Contact</span>
+  <h1>Parlons-en.</h1>
+  <p>Une question sur une commande, une taille, une collaboration ? Écrivez-nous.</p>
+</section>
+
+<section class="section-tight">
+  <div class="container contact-wrap">
+
+    <!-- =====================================================
+         INFOS DE CONTACT
+         Modifie l'email, le téléphone, l'adresse et les
+         liens réseaux sociaux directement dans ce bloc.
+         ===================================================== -->
+    <div class="contact-info">
+      <h3>Nos coordonnées</h3>
+      <div class="info-line">
+        <span>Email</span>
+        <strong>bullborncontact@gmail.com</strong>
+      </div>
+      <div class="info-line">
+        <span>Téléphone</span>
+        <strong>+212 766808334 </strong>
+      </div>
+      <div class="info-line">
+        <span>Adresse</span>
+        <strong>Kénitra, Maroc</strong>
+      </div>
+      <div class="info-line">
+        <span>Horaires</span>
+        <strong>Lun – Sam · 9h – 18h</strong>
+      </div>
+      <div class="social-row">
+        <div class="social-row">
+
+    <a href="https://www.instagram.com/bullborn.ma"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+    </a>
+
+    <a href="https://www.tiktok.com/@bullborn1"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="TikTok">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82c-.9-.68-1.5-1.7-1.63-2.87h-3.02v13.35c0 1.5-1.22 2.72-2.72 2.72a2.72 2.72 0 1 1 0-5.44c.25 0 .5.03.73.1V9.6a5.75 5.75 0 1 0 5.02 5.7V9.15a7.6 7.6 0 0 0 4.42 1.42V7.55a4.65 4.65 0 0 1-2.8-1.73z"/></svg>
+    </a>
+
+    <a href="#"
+       aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.65l.4-3.08h-3.05V8.05c0-.89.25-1.5 1.52-1.5h1.63V3.8C15.94 3.66 15.06 3.6 14.02 3.6c-2.4 0-4.05 1.47-4.05 4.16v2.26H7.3v3.08h2.67V21h3.53z"/></svg>
+    </a>
+
+</div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         FORMULAIRE — géré par script.js (voir formSubmit).
+         Actuellement le formulaire affiche juste un message
+         de confirmation ; pour l'envoyer réellement quelque
+         part, connecte-le à un service comme Formspree,
+         EmailJS, ou à ton propre backend (voir script.js).
+         ===================================================== -->
+    <form id="contactForm" novalidate>
+      <div class="field">
+        <label for="name">Nom</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-block">Envoyer</button>
+      <p class="form-note">Nous répondons en général sous 24 à 48h ouvrées.</p>
+      <div class="form-success" id="formSuccess">Merci ! Votre message a bien été envoyé — nous revenons vers vous rapidement.</div>
+    </form>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">BULLBORN</div>
+        <p class="footer-tag">Vêtements de sport pour ceux qui construisent leur force chaque jour.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="index.html">Accueil</a>
+          <a href="shop.html">Shop</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <span>bullborncontact@gmail.com</span>
+          <span>+212 766808334</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BULLBORN. Tous droits réservés.</span>
+      <span>Conçu pour la discipline.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Panneau panier -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-head">
+    <h3>Votre panier</h3>
+    <button class="cart-close" id="cartCloseBtn" aria-label="Fermer le panier">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty">Votre panier est vide.</p>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">0 MAD</span></div>
+    <button class="btn btn-block" id="checkoutBtn">Passer la commande</button>
+  </div>
+</aside>
+
+<!-- Modal de commande -->
+<div class="checkout-overlay" id="checkoutOverlay"></div>
+<div class="checkout-modal" id="checkoutModal">
+  <button class="cart-close" id="checkoutCloseBtn" aria-label="Fermer">&times;</button>
+  <h3>Finaliser la commande</h3>
+  <form id="checkoutForm" novalidate>
+    <div class="field">
+      <label for="coPrenom">Prénom</label>
+      <input type="text" id="coPrenom" name="prenom" required>
+    </div>
+    <div class="field">
+      <label for="coNom">Nom</label>
+      <input type="text" id="coNom" name="nom" required>
+    </div>
+    <div class="field">
+      <label for="coTel">Numéro de téléphone</label>
+      <input type="tel" id="coTel" name="tel" required>
+    </div>
+    <div class="field">
+      <label for="coAdresse">Adresse de livraison</label>
+      <textarea id="coAdresse" name="adresse" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-block">Confirmer la commande</button>
+    <p class="form-note">Paiement à la livraison. Nous vous contacterons pour confirmer.</p>
+  </form>
+
+  <div class="tracking-success" id="trackingSuccess">
+    <h4>Commande enregistrée</h4>
+    <p>Ton code de suivi :</p>
+    <div class="tracking-code" id="trackingCodeValue">BB-000000</div>
+    <p class="form-note">Note ce code pour suivre ta commande sur la page <a href="suivi.html">Suivi</a>. Tu vas être redirigé vers WhatsApp pour confirmer la commande.</p>
+    <button type="button" class="btn btn-block" id="trackingCloseBtn2">Fermer</button>
+  </div>
+</div>
+
+<div class="added-msg" id="addedMsg">Ajouté au panier</div>
+
+<script src="script.js"></script>
+</body>
+</html>
