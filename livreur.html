@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace livreur — BULLBORN</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN
+    </a>
+    <span class="label" style="margin-left:auto;">Espace livreur</span>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <span class="label">Livreur</span>
+  <h1>Livraison en cours</h1>
+  <p>Entre le mot de passe équipe, puis le code de la commande à livrer.</p>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+
+    <!-- ===================================================
+         PORTAIL — mot de passe simple partagé à l'équipe.
+         Ce n'est PAS une vraie sécurité (le mot de passe est
+         visible dans le code source de la page) : ça sert
+         juste à éviter qu'un client tombe dessus par hasard.
+         Change la valeur de DRIVER_PASSWORD plus bas dans le
+         <script> pour changer le mot de passe équipe.
+         =================================================== -->
+    <div class="gate-wrap" id="gateWrap">
+      <div class="field">
+        <label for="gatePassword">Mot de passe équipe</label>
+        <input type="password" id="gatePassword" autocomplete="off">
+      </div>
+      <button type="button" class="btn btn-block" id="gateSubmit">Entrer</button>
+      <p class="track-error" id="gateError">Mot de passe incorrect.</p>
+    </div>
+
+    <!-- ===================================================
+         RECHERCHE DE COMMANDE (visible après le mot de passe)
+         =================================================== -->
+    <div id="driverLookupWrap" style="display:none;">
+      <div class="track-lookup">
+        <input type="text" id="driverCodeInput" placeholder="Ex : BB-4F7K2Q" autocomplete="off">
+        <button type="button" class="btn" id="driverLookupBtn">Charger</button>
+      </div>
+      <p class="track-error" id="driverError">Aucune commande trouvée avec ce code.</p>
+      <p class="track-error" id="driverNotReady">Firebase n'est pas configuré — voir firebase-config.js.</p>
+
+      <div class="driver-order" id="driverOrder">
+        <div class="track-summary">
+          <div class="track-summary-line"><span>Client</span><span id="dClient">-</span></div>
+          <div class="track-summary-line"><span>Téléphone</span><span id="dTel">-</span></div>
+          <div class="track-summary-line"><span>Adresse</span><span id="dAdresse">-</span></div>
+          <div class="track-summary-line"><span>Total</span><span id="dTotal">-</span></div>
+          <div class="track-summary-line"><span>Statut actuel</span><span id="dStatus">-</span></div>
+        </div>
+
+        <div class="driver-actions">
+          <button type="button" class="btn btn-block" id="startDeliveryBtn">Démarrer la livraison (active le GPS)</button>
+          <button type="button" class="btn btn-outline btn-block" id="finishDeliveryBtn">Marquer comme livrée</button>
+        </div>
+        <p class="driver-status-line" id="driverGpsStatus">GPS inactif.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 BULLBORN.</span>
+      <span>Espace interne — livreur.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   Espace livreur : partage la position GPS en direct pendant
+   la livraison, écrite dans orders/{code}/location toutes les
+   fois que le navigateur détecte un déplacement (watchPosition).
+   La page suivi.html du client lit ce même chemin en direct.
+   ========================================================= */
+(function(){
+  // Change ce mot de passe pour l'équipe livraison.
+  const DRIVER_PASSWORD = 'bullborn2026';
+
+  const gateWrap = document.getElementById('gateWrap');
+  const gatePassword = document.getElementById('gatePassword');
+  const gateSubmit = document.getElementById('gateSubmit');
+  const gateError = document.getElementById('gateError');
+  const driverLookupWrap = document.getElementById('driverLookupWrap');
+
+  gateSubmit.addEventListener('click', () => {
+    if (gatePassword.value === DRIVER_PASSWORD) {
+      gateWrap.style.display = 'none';
+      driverLookupWrap.style.display = 'block';
+    } else {
+      gateError.classList.add('show');
+    }
+  });
+  gatePassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') gateSubmit.click(); });
+
+  function isFirebaseReady() {
+    return typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0;
+  }
+
+  const codeInput = document.getElementById('driverCodeInput');
+  const lookupBtn = document.getElementById('driverLookupBtn');
+  const errorEl = document.getElementById('driverError');
+  const notReadyEl = document.getElementById('driverNotReady');
+  const orderEl = document.getElementById('driverOrder');
+  const gpsStatusEl = document.getElementById('driverGpsStatus');
+
+  const STATUS_LABELS = { recue: 'Reçue', preparation: 'En préparation', livraison: 'En livraison', livree: 'Livrée' };
+
+  let currentCode = null;
+  let watchId = null;
+
+  function renderOrder(order) {
+    document.getElementById('dClient').textContent = (order.prenom || '') + ' ' + (order.nom || '');
+    document.getElementById('dTel').textContent = order.tel || '-';
+    document.getElementById('dAdresse').textContent = order.adresse || '-';
+    document.getElementById('dTotal').textContent = (order.total || 0) + ' MAD';
+    document.getElementById('dStatus').textContent = STATUS_LABELS[order.status] || order.status;
+    orderEl.classList.add('show');
+  }
+
+  function loadOrder() {
+    const code = codeInput.value.trim().toUpperCase();
+    if (!code) return;
+    if (!isFirebaseReady()) { notReadyEl.classList.add('show'); return; }
+    notReadyEl.classList.remove('show');
+    errorEl.classList.remove('show');
+
+    firebase.database().ref('orders/' + code).get().then((snap) => {
+      const order = snap.val();
+      if (!order) { errorEl.classList.add('show'); orderEl.classList.remove('show'); return; }
+      currentCode = code;
+      renderOrder(order);
+    }).catch(() => errorEl.classList.add('show'));
+  }
+  lookupBtn.addEventListener('click', loadOrder);
+
+  function startDelivery() {
+    if (!currentCode) return;
+    if (!navigator.geolocation) {
+      gpsStatusEl.textContent = 'Ce navigateur ne supporte pas la géolocalisation.';
+      return;
+    }
+    firebase.database().ref('orders/' + currentCode + '/status').set('livraison');
+    document.getElementById('dStatus').textContent = STATUS_LABELS.livraison;
+
+    gpsStatusEl.textContent = 'Activation du GPS...';
+    watchId = navigator.geolocation.watchPosition((pos) => {
+      gpsStatusEl.textContent = 'Position partagée en direct avec le client.';
+      gpsStatusEl.classList.add('live');
+      firebase.database().ref('orders/' + currentCode + '/location').set({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        updatedAt: Date.now()
+      });
+    }, (err) => {
+      gpsStatusEl.textContent = 'Impossible d\'accéder au GPS : ' + err.message;
+      gpsStatusEl.classList.remove('live');
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+  }
+
+  function finishDelivery() {
+    if (!currentCode) return;
+    if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    firebase.database().ref('orders/' + currentCode + '/status').set('livree');
+    document.getElementById('dStatus').textContent = STATUS_LABELS.livree;
+    gpsStatusEl.textContent = 'Livraison terminée. GPS désactivé.';
+    gpsStatusEl.classList.remove('live');
+  }
+
+  document.getElementById('startDeliveryBtn').addEventListener('click', startDelivery);
+  document.getElementById('finishDeliveryBtn').addEventListener('click', finishDelivery);
+})();
+</script>
+</body>
+</html>
