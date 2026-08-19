@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Livreur — BULLBORN</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN <span style="color:var(--gray-dim);font-family:var(--font-body);font-size:12px;letter-spacing:0.1em;margin-left:6px;">STAFF</span>
+    </a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <span class="label">Interne</span>
+  <h1>Espace livreur</h1>
+  <p>Connecte-toi pour voir les commandes et mettre à jour leur statut.</p>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+
+    <!-- =====================================================
+         CONNEXION
+         Le compte (email + mot de passe) se crée dans Firebase
+         Console -> Authentication -> Users -> Ajouter un
+         utilisateur. Donne cet email/mot de passe à la
+         personne qui gère les livraisons.
+         ===================================================== -->
+    <form class="staff-login" id="staffLoginForm" novalidate>
+      <div class="field">
+        <label for="staffEmail">Email</label>
+        <input type="email" id="staffEmail" required>
+      </div>
+      <div class="field">
+        <label for="staffPassword">Mot de passe</label>
+        <input type="password" id="staffPassword" required>
+      </div>
+      <button type="submit" class="btn btn-block">Se connecter</button>
+      <p class="track-msg" id="staffLoginMsg" style="margin-top:16px;"></p>
+    </form>
+
+    <!-- =====================================================
+         LISTE DES COMMANDES (visible une fois connecté)
+         ===================================================== -->
+    <div class="staff-orders" id="staffOrders">
+      <div class="staff-top">
+        <span class="label">Commandes</span>
+        <button type="button" class="btn btn-outline" id="staffLogoutBtn">Se déconnecter</button>
+      </div>
+      <div id="staffOrdersList"></div>
+      <p class="staff-empty" id="staffEmptyMsg" style="display:none;">Aucune commande pour le moment.</p>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 BULLBORN. Tous droits réservés.</span>
+      <span>Page interne — non référencée.</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="livreur.js"></script>
+</body>
+</html>

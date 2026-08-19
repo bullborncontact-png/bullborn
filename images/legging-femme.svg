@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#101010"/>
+  <rect x="1" y="1" width="798" height="798" fill="none" stroke="#2a2a2a" stroke-width="2"/>
+
+  <!-- silhouette legging (flat sketch, ligne uniquement) -->
+  <g fill="none" stroke="#f6f6f4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+
+    <!-- ceinture haute -->
+    <path d="M330 190
+             Q400 172 470 190
+             L482 250
+             Q400 234 318 250
+             Z"/>
+
+    <!-- hanches -->
+    <path d="M318 250
+             Q400 234 482 250
+             L500 330
+             L440 340
+             L400 320
+             L360 340
+             L300 330
+             Z"/>
+
+    <!-- jambe gauche -->
+    <path d="M300 330
+             L360 340
+             L372 470
+             L364 610
+             L356 660
+             L316 660
+             L308 610
+             L302 470
+             Q292 400 300 330 Z"/>
+
+    <!-- jambe droite -->
+    <path d="M500 330
+             L440 340
+             L428 470
+             L436 610
+             L444 660
+             L484 660
+             L492 610
+             L498 470
+             Q508 400 500 330 Z"/>
+
+    <!-- entrejambe -->
+    <path d="M400 320 L364 340 M400 320 L436 340" stroke-width="2"/>
+  </g>
+
+  <!-- logo cornes BULLBORN sur la ceinture -->
+  <g transform="translate(400,206) scale(0.34)" fill="#f6f6f4">
+    <path d="M-64 -70 L-40 10 L-18 34 L-10 60 L-2 34 L2 34 L10 60 L18 34 L40 10 L64 -70
+             L46 -70 L28 -18 L10 4 L2 18 L-2 18 L-10 4 L-28 -18 L-46 -70 Z"/>
+  </g>
+
+  <text x="400" y="720" font-family="Inter, Arial, sans-serif" font-size="14" fill="#5c5c58" text-anchor="middle" letter-spacing="3">APERÇU — REMPLACE PAR UNE VRAIE PHOTO</text>
+</svg>

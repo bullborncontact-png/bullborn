@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — BULLBORN</title>
+<meta name="description" content="Découvrez la collection BULLBORN : hoodie, débardeur et t-shirt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="shop.html" class="active">Shop</a></li>
+      <li><a href="suivi.html">Suivi</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartOpenBtn">
+        Panier <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <span class="label">Boutique</span>
+  <h1>La Collection</h1>
+  <p>Trois essentiels. Coupe brute, matières solides, pensés pour l'effort.</p>
+</section>
+
+<!-- =========================================================
+     PRODUITS
+     -----------------------------------------------------------
+     Pour ajouter, modifier ou supprimer un produit :
+     - Copie/colle un bloc <article class="product-card">...</article>
+     - Change le texte du nom (h3), du prix (.product-price)
+       et de la description (.product-desc)
+     - Change le "data-name" et "data-price" du bouton
+       (utilisés par script.js pour le panier)
+     - Remplace le fichier image dans /images et le chemin
+       "src" ci-dessous (ex: images/hoodie.jpg)
+     ========================================================= -->
+<section class="section-tight">
+  <div class="container">
+
+    <!-- =====================================================
+         ONGLETS HOMME / FEMME
+         Filtrent les produits ci-dessous selon leur attribut
+         data-category ("homme" ou "femme") sur chaque
+         <article class="product-card">. Géré par script.js.
+         ===================================================== -->
+    <div class="shop-tabs" id="shopTabs">
+      <button type="button" class="shop-tab active" data-filter="all">Tout</button>
+      <button type="button" class="shop-tab" data-filter="homme">Homme</button>
+      <button type="button" class="shop-tab" data-filter="femme">Femme</button>
+    </div>
+
+    <div class="product-grid">
+
+      <article class="product-card" data-category="homme">
+        <div class="product-media">
+          <img src="images/cat-hoodie.jpg" alt="Hoodie BULLBORN noir" onerror="this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-info">
+          <h3>Hoodie BULLBORN</h3>
+          <p class="product-desc">Molleton épais, coupe droite, capuche doublée.</p>
+          <p class="product-price">99 MAD</p>
+          <div class="product-sizes" data-sizes>
+            <span class="size-label">Taille</span>
+            <div class="size-group">
+              <button type="button" class="size-option" data-size="M">M</button>
+              <button type="button" class="size-option" data-size="L">L</button>
+              <button type="button" class="size-option" data-size="XL">XL</button>
+              <button type="button" class="size-option" data-size="XXL">XXL</button>
+              <button type="button" class="size-option" data-size="XXXL">XXXL</button>
+            </div>
+            <p class="size-warning">Choisis une taille avant d'ajouter au panier.</p>
+          </div>
+          <button class="btn btn-block add-to-cart" data-name="Hoodie BULLBORN" data-price="450">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <article class="product-card" data-category="homme">
+        <div class="product-media">
+          <img src="images/cat-debardeur.jpg" alt="Débardeur BULLBORN" onerror="this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-info">
+          <h3>Débardeur BULLBORN</h3>
+          <p class="product-desc">Coton respirant, coupe ample, échancrures profondes.</p>
+          <p class="product-price">180 MAD</p>
+          <div class="product-sizes" data-sizes>
+            <span class="size-label">Taille</span>
+            <div class="size-group">
+              <button type="button" class="size-option" data-size="M">M</button>
+              <button type="button" class="size-option" data-size="L">L</button>
+              <button type="button" class="size-option" data-size="XL">XL</button>
+              <button type="button" class="size-option" data-size="XXL">XXL</button>
+              <button type="button" class="size-option" data-size="XXXL">XXXL</button>
+            </div>
+            <p class="size-warning">Choisis une taille avant d'ajouter au panier.</p>
+          </div>
+          <button class="btn btn-block add-to-cart" data-name="Débardeur BULLBORN" data-price="180">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <article class="product-card" data-category="homme">
+        <div class="product-media">
+          <img src="images/cat-tshirt.jpg" alt="T-shirt BULLBORN" onerror="this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-info">
+          <h3>T-shirt BULLBORN</h3>
+          <p class="product-desc">Coton lourd 240g, coupe droite, logo brodé.</p>
+          <p class="product-price">220 MAD</p>
+          <div class="product-sizes" data-sizes>
+            <span class="size-label">Taille</span>
+            <div class="size-group">
+              <button type="button" class="size-option" data-size="M">M</button>
+              <button type="button" class="size-option" data-size="L">L</button>
+              <button type="button" class="size-option" data-size="XL">XL</button>
+              <button type="button" class="size-option" data-size="XXL">XXL</button>
+              <button type="button" class="size-option" data-size="XXXL">XXXL</button>
+            </div>
+            <p class="size-warning">Choisis une taille avant d'ajouter au panier.</p>
+          </div>
+          <button class="btn btn-block add-to-cart" data-name="T-shirt BULLBORN" data-price="220">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <!-- =====================================================
+           SECTION FEMME
+           Remplace "images/legging-femme.jpg" et
+           "images/tshirt-femme.jpg" par tes vraies photos une
+           fois prêtes (tant qu'elles n'existent pas, le visuel
+           "IMAGE PRODUIT À AJOUTER" s'affiche à leur place).
+           ===================================================== -->
+      <article class="product-card" data-category="femme">
+        <div class="product-media">
+          <img src="images/legging-femme.png" alt="Legging BULLBORN Femme" onerror="this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-info">
+          <h3>Legging BULLBORN</h3>
+          <p class="product-desc">Taille haute, tissu extensible, logo discret.</p>
+          <p class="product-price">220 MAD</p>
+          <div class="product-sizes" data-sizes>
+            <span class="size-label">Taille</span>
+            <div class="size-group">
+              <button type="button" class="size-option" data-size="XS">XS</button>
+              <button type="button" class="size-option" data-size="S">S</button>
+              <button type="button" class="size-option" data-size="M">M</button>
+              <button type="button" class="size-option" data-size="L">L</button>
+              <button type="button" class="size-option" data-size="XL">XL</button>
+            </div>
+            <p class="size-warning">Choisis une taille avant d'ajouter au panier.</p>
+          </div>
+          <button class="btn btn-block add-to-cart" data-name="Legging BULLBORN" data-price="220">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <article class="product-card" data-category="femme">
+        <div class="product-media">
+          <img src="images/tshirt-femme.png" alt="T-shirt BULLBORN Femme" onerror="this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-info">
+          <h3>T-shirt BULLBORN Femme</h3>
+          <p class="product-desc">Coupe ajustée, coton doux, logo brodé.</p>
+          <p class="product-price">190 MAD</p>
+          <div class="product-sizes" data-sizes>
+            <span class="size-label">Taille</span>
+            <div class="size-group">
+              <button type="button" class="size-option" data-size="XS">XS</button>
+              <button type="button" class="size-option" data-size="S">S</button>
+              <button type="button" class="size-option" data-size="M">M</button>
+              <button type="button" class="size-option" data-size="L">L</button>
+              <button type="button" class="size-option" data-size="XL">XL</button>
+            </div>
+            <p class="size-warning">Choisis une taille avant d'ajouter au panier.</p>
+          </div>
+          <button class="btn btn-block add-to-cart" data-name="T-shirt BULLBORN Femme" data-price="190">Ajouter au panier</button>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">BULLBORN</div>
+        <p class="footer-tag">Vêtements de sport pour ceux qui construisent leur force chaque jour.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="index.html">Accueil</a>
+          <a href="shop.html">Shop</a>
+          <a href="suivi.html">Suivi de commande</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <span>bullborncontact@gmail.com</span>
+          <span>+212 766808334</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BULLBORN. Tous droits réservés.</span>
+      <span>Conçu pour la discipline.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Panneau panier -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-head">
+    <h3>Votre panier</h3>
+    <button class="cart-close" id="cartCloseBtn" aria-label="Fermer le panier">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty">Votre panier est vide.</p>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">0 MAD</span></div>
+    <button class="btn btn-block" id="checkoutBtn">Passer la commande</button>
+  </div>
+</aside>
+
+<!-- Modal de commande -->
+<div class="checkout-overlay" id="checkoutOverlay"></div>
+<div class="checkout-modal" id="checkoutModal">
+  <button class="cart-close" id="checkoutCloseBtn" aria-label="Fermer">&times;</button>
+  <h3>Finaliser la commande</h3>
+  <form id="checkoutForm" novalidate>
+    <div class="field">
+      <label for="coPrenom">Prénom</label>
+      <input type="text" id="coPrenom" name="prenom" required>
+    </div>
+    <div class="field">
+      <label for="coNom">Nom</label>
+      <input type="text" id="coNom" name="nom" required>
+    </div>
+    <div class="field">
+      <label for="coTel">Numéro de téléphone</label>
+      <input type="tel" id="coTel" name="tel" required>
+    </div>
+    <div class="field">
+      <label for="coAdresse">Adresse de livraison</label>
+      <textarea id="coAdresse" name="adresse" required></textarea>
+    </div>
+    <div class="field">
+      <label for="coEmail">Email (optionnel — pour suivre ta commande)</label>
+      <input type="email" id="coEmail" name="email">
+    </div>
+    <button type="submit" class="btn btn-block">Confirmer la commande</button>
+    <p class="form-note">Paiement à la livraison. Nous vous contacterons pour confirmer.</p>
+  </form>
+</div>
+
+<!-- Confirmation de commande + code de suivi -->
+<div class="checkout-overlay" id="orderConfirmOverlay"></div>
+<div class="checkout-modal order-confirm-modal" id="orderConfirmModal">
+  <button class="cart-close" id="orderConfirmClose" aria-label="Fermer">&times;</button>
+  <h3>Commande envoyée !</h3>
+  <p class="form-note" style="margin-top:-14px;margin-bottom:20px;">Garde ce code, il te permet de suivre ta commande à tout moment.</p>
+  <div class="order-code" id="orderConfirmCode">BB-000000</div>
+  <button type="button" class="btn btn-outline btn-block" id="orderConfirmCopy" style="margin-top:16px;">Copier le code</button>
+  <a href="suivi.html" class="btn btn-block" id="orderConfirmTrackLink" style="margin-top:12px;">Suivre ma commande</a>
+</div>
+
+<div class="added-msg" id="addedMsg">Ajouté au panier</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
