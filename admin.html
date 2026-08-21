@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Commandes BULLBORN</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* =======================================================
+     Styles propres à la page admin. Le reste du look (couleurs,
+     polices, boutons) vient de style.css comme sur le site.
+     ======================================================= */
+  .admin-wrap{ padding: 40px 0 100px; }
+  .admin-head{
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 30px;
+  }
+  .admin-head h1{ font-size: clamp(26px,4vw,36px); }
+  .admin-stats{ display: flex; gap: 10px; flex-wrap: wrap; }
+  .admin-stat{
+    border: 1px solid var(--line); padding: 8px 14px;
+    font-size: 12px; letter-spacing: 0.06em; color: var(--gray);
+  }
+  .admin-stat strong{ color: var(--white); }
+
+  .admin-filters{ display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .admin-filter{
+    background: transparent; border: 1px solid var(--line); color: var(--gray);
+    padding: 8px 16px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .admin-filter.active, .admin-filter:hover{ border-color: var(--white); color: var(--white); }
+
+  .order-list{ display: flex; flex-direction: column; gap: 14px; }
+  .order-card{
+    border: 1px solid var(--line);
+    background: var(--black-soft);
+    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 1.4fr 1.6fr 1fr;
+    gap: 20px;
+  }
+  .order-col h4{
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gray-dim); margin-bottom: 8px;
+  }
+  .order-date{ font-size: 12px; color: var(--gray-dim); margin-bottom: 6px; }
+  .order-client strong{ display:block; font-size: 15px; margin-bottom: 4px; }
+  .order-client span{ display:block; font-size: 13px; color: var(--gray); }
+  .order-items{ font-size: 13px; color: var(--gray); line-height: 1.7; }
+  .order-total{ font-family: var(--font-display); font-size: 18px; margin-top: 8px; }
+
+  .status-select{
+    width: 100%;
+    background: var(--black);
+    border: 1px solid var(--line);
+    color: var(--white);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: var(--font-body);
+  }
+  .status-badge{
+    display: inline-flex; align-items:center; gap:7px;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 10px; margin-bottom: 10px; border: 1px solid var(--line);
+  }
+  .status-badge::before{ content:""; width:7px; height:7px; border-radius:50%; background: var(--gray); }
+  .status-en_attente::before{ background:#e8c24a; }
+  .status-confirmee::before{ background:#4a9fe8; }
+  .status-preparation::before{ background:#e88a4a; }
+  .status-livree::before{ background:#5ecb7a; }
+  .status-annulee::before{ background:#e8534a; }
+
+  .admin-empty, .admin-locked, .admin-loading{
+    color: var(--gray); font-size: 14px; padding: 40px 0; text-align: center;
+  }
+
+  .login-box{
+    max-width: 360px; margin: 90px auto; text-align: center;
+  }
+  .login-box h2{ font-size: 24px; margin-bottom: 18px; }
+  .login-box input{
+    width: 100%; background: var(--black-soft); border: 1px solid var(--line);
+    color: var(--white); padding: 14px 16px; font-size: 14.5px; margin-bottom: 14px;
+    text-align: center; letter-spacing: 0.1em;
+  }
+  .login-error{ color:#e8a4a4; font-size: 13px; margin-top: 10px; min-height: 18px; }
+
+  @media (max-width: 860px){
+    .order-card{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Logo BULLBORN">
+      BULLBORN <span style="color:var(--gray-dim); font-size:13px; margin-left:6px; letter-spacing:0.1em;">ADMIN</span>
+    </a>
+  </nav>
+</header>
+
+<!-- =========================================================
+     ÉCRAN DE CONNEXION
+     Mot de passe défini dans la constante ADMIN_PASSWORD
+     tout en bas du fichier, dans le <script>. Change-le avant
+     de mettre le site en ligne.
+     À savoir : cette protection est simple (côté navigateur),
+     pas un vrai compte sécurisé — largement suffisant pour un
+     usage interne, mais ne partage jamais ce lien publiquement.
+     ========================================================= -->
+<div class="container">
+  <div class="login-box" id="loginBox">
+    <h2>Accès admin</h2>
+    <input type="password" id="adminPassword" placeholder="Mot de passe" autocomplete="off">
+    <button class="btn btn-block" id="loginBtn">Entrer</button>
+    <p class="login-error" id="loginError"></p>
+  </div>
+</div>
+
+<!-- =========================================================
+     TABLEAU DE BORD DES COMMANDES (caché tant qu'on n'est pas
+     connecté). Les commandes viennent de Firebase en temps
+     réel : dès qu'un client commande, elle apparaît ici, et
+     dès que tu changes un statut, ça se sauvegarde tout seul.
+     ========================================================= -->
+<div class="admin-wrap container" id="adminWrap" style="display:none;">
+  <div class="admin-head">
+    <div>
+      <span class="label">Commandes</span>
+      <h1>Suivi des commandes</h1>
+    </div>
+    <div class="admin-stats" id="adminStats"></div>
+  </div>
+
+  <div class="admin-filters" id="adminFilters">
+    <button type="button" class="admin-filter active" data-filter="all">Toutes</button>
+    <button type="button" class="admin-filter" data-filter="en_attente">En attente</button>
+    <button type="button" class="admin-filter" data-filter="confirmee">Confirmée</button>
+    <button type="button" class="admin-filter" data-filter="preparation">En préparation</button>
+    <button type="button" class="admin-filter" data-filter="livree">Livrée</button>
+    <button type="button" class="admin-filter" data-filter="annulee">Annulée</button>
+  </div>
+
+  <div class="admin-loading" id="adminLoading">Chargement des commandes…</div>
+  <div class="order-list" id="orderList"></div>
+  <p class="admin-empty" id="adminEmpty" style="display:none;">Aucune commande pour l'instant.</p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+/* =========================================================
+   Mot de passe de la page admin — change-le pour le tien.
+   ========================================================= */
+const ADMIN_PASSWORD = "bullborn2026";
+
+const STATUS_LABELS = {
+  en_attente:  "En attente",
+  confirmee:   "Confirmée",
+  preparation: "En préparation",
+  livree:      "Livrée",
+  annulee:     "Annulée"
+};
+
+let allOrders = [];
+let currentFilter = 'all';
+
+function checkLogin() {
+  const pass = document.getElementById('adminPassword').value;
+  const errEl = document.getElementById('loginError');
+  if (pass === ADMIN_PASSWORD) {
+    sessionStorage.setItem('bullborn_admin_ok', '1');
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('adminWrap').style.display = 'block';
+    startListening();
+  } else {
+    errEl.textContent = "Mot de passe incorrect.";
+  }
+}
+
+document.getElementById('loginBtn').addEventListener('click', checkLogin);
+document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkLogin();
+});
+
+if (sessionStorage.getItem('bullborn_admin_ok') === '1') {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('adminWrap').style.display = 'block';
+  startListening();
+}
+
+function startListening() {
+  if (typeof db === 'undefined') {
+    document.getElementById('adminLoading').textContent =
+      "Firebase n'est pas configuré — remplis firebase-config.js (voir les instructions dans ce fichier) pour que les commandes s'affichent ici.";
+    return;
+  }
+  db.ref('commandes').on('value', (snapshot) => {
+    document.getElementById('adminLoading').style.display = 'none';
+    const data = snapshot.val() || {};
+    allOrders = Object.entries(data).map(([id, order]) => ({ id, ...order }));
+    allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+    renderStats();
+    renderOrders();
+  });
+}
+
+function renderStats() {
+  const counts = { en_attente: 0, confirmee: 0, preparation: 0, livree: 0, annulee: 0 };
+  allOrders.forEach(o => { if (counts[o.statut] !== undefined) counts[o.statut]++; });
+  const statsEl = document.getElementById('adminStats');
+  statsEl.innerHTML = `<div class="admin-stat"><strong>${allOrders.length}</strong> commandes</div>` +
+    Object.keys(STATUS_LABELS).map(key =>
+      `<div class="admin-stat">${STATUS_LABELS[key]} · <strong>${counts[key] || 0}</strong></div>`
+    ).join('');
+}
+
+function renderOrders() {
+  const listEl = document.getElementById('orderList');
+  const emptyEl = document.getElementById('adminEmpty');
+  const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.statut === currentFilter);
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  listEl.innerHTML = filtered.map(order => {
+    const dateStr = order.date ? new Date(order.date).toLocaleString('fr-FR') : '';
+    const items = (order.articles || []).map(a =>
+      `${a.name} (Taille ${a.size || '-'}) x${a.qty} — ${a.price * a.qty} MAD`
+    ).join('<br>');
+    const statutKey = order.statut || 'en_attente';
+
+    return `
+      <div class="order-card">
+        <div class="order-col">
+          <h4>Client</h4>
+          <div class="order-date">${dateStr}</div>
+          <div class="order-client">
+            <strong>${order.prenom || ''} ${order.nom || ''}</strong>
+            <span>${order.tel || ''}</span>
+            <span>${order.adresse || ''}</span>
+          </div>
+        </div>
+        <div class="order-col">
+          <h4>Articles</h4>
+          <div class="order-items">${items}</div>
+          <div class="order-total">${order.total || 0} MAD</div>
+        </div>
+        <div class="order-col">
+          <h4>Statut</h4>
+          <div class="status-badge status-${statutKey}">${STATUS_LABELS[statutKey] || statutKey}</div>
+          <select class="status-select" data-order-id="${order.id}">
+            ${Object.keys(STATUS_LABELS).map(key =>
+              `<option value="${key}" ${key === statutKey ? 'selected' : ''}>${STATUS_LABELS[key]}</option>`
+            ).join('')}
+          </select>
+        </div>
+      </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.status-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const id = sel.dataset.orderId;
+      db.ref('commandes/' + id).update({ statut: sel.value });
+    });
+  });
+}
+
+document.getElementById('adminFilters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.admin-filter');
+  if (!btn) return;
+  currentFilter = btn.dataset.filter;
+  document.querySelectorAll('.admin-filter').forEach(b => b.classList.toggle('active', b === btn));
+  renderOrders();
+});
+</script>
+
+</body>
+</html>
