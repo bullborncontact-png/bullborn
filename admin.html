@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — BULLBORN</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- =========================================================
+     ÉCRAN DE CONNEXION
+     Mot de passe défini dans admin.js (ADMIN_PASSWORD).
+     Ce n'est qu'une protection légère côté navigateur, pas une
+     vraie sécurité — n'importe qui lisant le code source peut
+     voir le mot de passe. Suffisant pour éviter les visiteurs
+     occasionnels, pas pour protéger des données sensibles.
+     ========================================================= */
+<section class="admin-login" id="adminLogin">
+  <form id="adminLoginForm" class="admin-login-box" novalidate>
+    <img src="images/logo.png" alt="BULLBORN" class="admin-login-logo">
+    <span class="label">Accès admin</span>
+    <h1>Panneau BULLBORN</h1>
+    <div class="field">
+      <label for="adminPassword">Mot de passe</label>
+      <input type="password" id="adminPassword" name="password" required autocomplete="current-password">
+    </div>
+    <p class="admin-login-error" id="adminLoginError">Mot de passe incorrect.</p>
+    <button type="submit" class="btn btn-block">Se connecter</button>
+    <a href="index.html" class="admin-back-link">← Retour au site</a>
+  </form>
+</section>
+
+<!-- =========================================================
+     TABLEAU DE BORD
+     ========================================================= -->
+<div class="admin-wrap" id="adminWrap" hidden>
+
+  <header class="admin-header">
+    <div class="admin-header-brand">
+      <img src="images/logo.png" alt="BULLBORN">
+      <span>Admin</span>
+    </div>
+    <div class="admin-header-actions">
+      <a href="index.html" class="admin-link">Voir le site</a>
+      <button class="btn btn-outline" id="adminLogoutBtn">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ---------- Statistiques ---------- -->
+    <section class="admin-stats" id="adminStats">
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Commandes totales</span>
+        <strong class="admin-stat-value" id="statTotalOrders">0</strong>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Chiffre d'affaires</span>
+        <strong class="admin-stat-value" id="statRevenue">0 MAD</strong>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">En attente</span>
+        <strong class="admin-stat-value" id="statPending">0</strong>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Meilleure vente</span>
+        <strong class="admin-stat-value admin-stat-value--small" id="statBestSeller">—</strong>
+      </div>
+    </section>
+
+    <!-- ---------- Onglets ---------- -->
+    <div class="admin-tabs" id="adminTabs">
+      <button type="button" class="admin-tab active" data-tab="orders">Commandes</button>
+      <button type="button" class="admin-tab" data-tab="stock">Stock</button>
+    </div>
+
+    <!-- ---------- Onglet Commandes ---------- -->
+    <section class="admin-panel" id="panelOrders">
+      <div class="admin-panel-head">
+        <h2>Commandes</h2>
+        <p>Change le statut d'une commande dès qu'elle avance dans le traitement.</p>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Contact</th>
+              <th>Articles</th>
+              <th>Total</th>
+              <th>Statut</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+        <p class="admin-empty" id="ordersEmpty">Aucune commande pour l'instant. Les commandes passées sur le site apparaîtront ici automatiquement.</p>
+      </div>
+    </section>
+
+    <!-- ---------- Onglet Stock ---------- -->
+    <section class="admin-panel" id="panelStock" hidden>
+      <div class="admin-panel-head">
+        <h2>Stock</h2>
+        <p>Modifie une quantité et clique en dehors du champ pour l'enregistrer. Une taille à 0 s'affiche comme en rupture de stock sur la boutique.</p>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="stockTable">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Taille</th>
+              <th>Quantité en stock</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
